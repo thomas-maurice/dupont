@@ -26,28 +26,28 @@ func ensureWireguardInterface(log *zap.Logger, name string) error {
 		if link.Type() != "wireguard" {
 			err := netlink.LinkDel(link)
 			if err != nil {
-				return err
+				return fmt.Errorf("could not delete wireguard interface: %w", err)
 			}
 		}
 	}
 
 	err := netlink.LinkAdd(&netlink.Wireguard{LinkAttrs: netlink.LinkAttrs{Name: name}})
 	if err != nil && !os.IsExist(err) {
-		return err
+		return fmt.Errorf("could not create wireguard interface: %w", err)
 	}
 
 	link, err = netlink.LinkByName(name)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not get a handle on %s: %w", name, err)
 	}
 	if link == nil {
 		return fmt.Errorf("could not get a handle on %s", name)
 	}
 	if err := netlink.LinkSetMTU(link, wireguardInterfaceMTU); err != nil {
-		return err
+		return fmt.Errorf("could not set interface MTU: %w", err)
 	}
 	if err := netlink.LinkSetUp(link); err != nil {
-		return err
+		return fmt.Errorf("could not set interface up: %w", err)
 	}
 
 	return nil
@@ -56,17 +56,18 @@ func ensureWireguardInterface(log *zap.Logger, name string) error {
 func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterface) error {
 	client, err := wgctrl.New()
 	if err != nil {
-		return err
+		return fmt.Errorf("could not create wireguard client: %w", err)
+
 	}
 
 	key, err := wgtypes.ParseKey(iface.Key.PrivateKey)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not parse wireguard private key on %s: %w", iface.Name, err)
 	}
 
 	link, err := netlink.LinkByName(iface.Name)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not configure interface %s: %w", iface.Name, err)
 	}
 	if link == nil {
 		return fmt.Errorf("could not get a handle on %s", iface.Name)
@@ -81,7 +82,7 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 		var peerIPs []net.IPNet
 		peerKey, err := wgtypes.ParseKey(peer.Key.PublicKey)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not parse private key of peer %s of %s: %w", peer.Name, iface.Name, err)
 		}
 
 		var udpEndpoint *net.UDPAddr
@@ -94,15 +95,15 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 
 		for _, nw := range peer.AllowedIPs {
 			_, peerNet, err := net.ParseCIDR(nw)
+			if err != nil {
+				return fmt.Errorf("could not parse peer allowed IP: %w", err)
+			}
 			if peerNet != nil {
 				peerIPs = append(peerIPs, *peerNet)
 			}
-			if err != nil {
-				return err
-			}
 
 			routes = append(routes, &netlink.Route{
-				LinkIndex: netlink.NewLinkAttrs().Index,
+				LinkIndex: link.Attrs().Index,
 				Dst:       peerNet,
 				Scope:     netlink.SCOPE_LINK,
 			})
@@ -120,7 +121,7 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 	for _, route := range routes {
 		err := netlink.RouteReplace(route)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not apply route: %w", err)
 		}
 	}
 
