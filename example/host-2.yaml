@@ -5,7 +5,7 @@ ensureSysctl: true
 interfaces:
   wireguard:
     - name: wg-0
-      address: 192.168.69.2/24
+      address: 192.168.69.2/32
       port: 6969
       key:
         privateKey: yEkDVgYvtyssPeK1cxCKYoZjNt65GL7NqBNceuOQQlY=
@@ -19,7 +19,7 @@ interfaces:
           key:
             publicKey: bScGfgslFnmIEcuAdU8PQla6OtE29VntPOd3rOb5phs=
           allowedIPs:
-            - 192.168.69.1/24
+            - 192.168.69.1/32
           endpoint:
             address: 10.99.1.230
             port: 6969

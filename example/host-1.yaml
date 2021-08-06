@@ -7,7 +7,7 @@ interfaces:
   wireguard:
     # First interface definition
     - name: wg-0
-      address: 192.168.69.1/24
+      address: 192.168.69.1/32
       port: 6969
       key:
         privateKey: 4CQWNQylWDWoZGgWDj58skAQuC84v1JXBKKqLTwcb3c=
@@ -21,7 +21,7 @@ interfaces:
           key:
             publicKey: NYNj4shJcxucrhgNTwRg1sshlCT9cGKvClWEsycm/28=
           allowedIPs:
-            - 192.168.69.2/24
+            - 192.168.69.2/32
           endpoint:
             address: 10.99.1.200
             port: 6969

@@ -36,7 +36,10 @@ func ensureWireguardInterface(log *zap.Logger, name string) error {
 		return err
 	}
 
-	link, _ = netlink.LinkByName(name)
+	link, err = netlink.LinkByName(name)
+	if err != nil {
+		return err
+	}
 	if link == nil {
 		return fmt.Errorf("could not get a handle on %s", name)
 	}
@@ -60,6 +63,16 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 	if err != nil {
 		return err
 	}
+
+	link, err := netlink.LinkByName(iface.Name)
+	if err != nil {
+		return err
+	}
+	if link == nil {
+		return fmt.Errorf("could not get a handle on %s", iface.Name)
+	}
+
+	routes := make([]*netlink.Route, 0)
 
 	var peers []wgtypes.PeerConfig
 	for _, peer := range iface.Peers {
@@ -87,6 +100,12 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 			if err != nil {
 				return err
 			}
+
+			routes = append(routes, &netlink.Route{
+				LinkIndex: netlink.NewLinkAttrs().Index,
+				Dst:       peerNet,
+				Scope:     netlink.SCOPE_LINK,
+			})
 		}
 
 		peers = append(peers, wgtypes.PeerConfig{
@@ -96,6 +115,13 @@ func configureWireguardInterface(log *zap.Logger, iface *types.WireguardInterfac
 			AllowedIPs:                  peerIPs,
 			Endpoint:                    udpEndpoint,
 		})
+	}
+
+	for _, route := range routes {
+		err := netlink.RouteReplace(route)
+		if err != nil {
+			return err
+		}
 	}
 
 	return client.ConfigureDevice(iface.Name, wgtypes.Config{
