@@ -60,3 +60,23 @@ interfaces:
       neighbours:
         - address: 192.168.70.1
 ```
+
+Which produces something like that:
+```
+$ ip address
+[...]
+40: wg-0: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1420 qdisc noqueue state UNKNOWN group default 
+    link/none 
+    inet 192.168.69.2/24 brd 192.168.69.255 scope global wg-0
+       valid_lft forever preferred_lft forever
+41: br-vx-0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1350 qdisc noqueue state UP group default 
+    link/ether 8a:a5:6a:ec:81:e5 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.70.2/24 brd 192.168.70.255 scope global br-vx-0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::88a5:6aff:feec:81e5/64 scope link 
+       valid_lft forever preferred_lft forever
+42: vx-0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1350 qdisc noqueue master br-vx-0 state UNKNOWN group default 
+    link/ether 8a:a5:6a:ec:81:e5 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::88a5:6aff:feec:81e5/64 scope link 
+       valid_lft forever preferred_lft forever
+```
