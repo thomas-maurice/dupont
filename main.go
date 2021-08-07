@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"time"
 
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclwrite"
@@ -62,8 +64,17 @@ func main() {
 
 		for hostName, hostConfig := range topology {
 			hclFile := hclwrite.NewEmptyFile()
+
 			gohcl.EncodeIntoBody(hostConfig, hclFile.Body())
+
 			wr := bytes.NewBuffer(nil)
+			wr.WriteString(fmt.Sprintf(`/*
+	Auto generated configuration ! You probably should not touch this.
+
+	Generated on: %v
+	Topology ID : %s 
+*/
+`, time.Now(), cfg.ID()))
 			hclFile.WriteTo(wr)
 
 			if _, err := os.Stat(cfg.ID()); os.IsNotExist(err) {
