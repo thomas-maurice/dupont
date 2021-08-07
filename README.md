@@ -20,7 +20,7 @@ Look at the config files in the `examples` directory
 Then compile the binary
 ```bash
 $ make
-$ ./bin/dupont -config examples/host-1.yaml
+$ ./bin/dupont -config examples/host-1.hcl
 ```
 
 ## Example config
