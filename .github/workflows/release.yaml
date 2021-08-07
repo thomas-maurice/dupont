@@ -1,10 +1,8 @@
 name: Generate release-artifacts
-
 on:
-  create:
-    tags:
-      - v*
-
+  release:
+    types:
+      - created
 jobs:
   generate:
     name: Generate cross-platform builds
