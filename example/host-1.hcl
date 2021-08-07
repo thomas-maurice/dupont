@@ -30,6 +30,7 @@ interfaces {
       keepAlive = 5
     }
   }
+  
   vxlan "vx-0" {
     address = "192.168.70.1/24"
     vni     = 60

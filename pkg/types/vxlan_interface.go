@@ -3,10 +3,8 @@ package types
 import "fmt"
 
 type VXLANInterface struct {
-	Name string `yaml:"name" hcl:",label"`
-
-	Interface `yaml:",inline" hcl:",remain"`
-
+	Name       string `yaml:"name" hcl:",label"`
+	Address    string `yaml:"address" hcl:"address"`
 	Parent     string `yaml:"parent" hcl:"parent"`
 	VNI        int    `yaml:"vni" hcl:"vni"`
 	Port       int    `yaml:"port" hcl:"port,optional"`

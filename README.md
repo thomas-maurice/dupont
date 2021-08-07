@@ -20,7 +20,7 @@ Look at the config files in the `examples` directory
 Then compile the binary
 ```bash
 $ make
-$ ./bin/dupont -config examples/host-1.hcl
+$ ./bin/dupont -what apply -config examples/host-1.hcl
 ```
 
 ## Example config
@@ -91,3 +91,25 @@ $ ip address
     inet6 fe80::88a5:6aff:feec:81e5/64 scope link 
        valid_lft forever preferred_lft forever
 ```
+
+## Topologies
+You can also use dupont to generate the topology of the network for you. Create a file like so
+```hcl
+name = "example topology"
+
+network {
+    wireguard     = "10.80.0.1/24"
+    overlay       = "10.80.1.1/24"
+    vni           = 42
+    wireguardPort = 6060
+}
+
+hosts = {
+    pi1 = "19.99.1.60"
+    pi2 = "19.99.1.61"
+    pi3 = "19.99.1.62"
+    pi4 = "19.99.1.63"
+}
+```
+
+Then run `./bin/dupont -what generate -config config/topology.hcl` and it will generate one file per host

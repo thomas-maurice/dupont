@@ -1,11 +1,13 @@
 package types
 
 type Config struct {
-	Interfaces struct {
-		Wireguard []WireguardInterface `yaml:"wireguard" hcl:"wireguard,block"`
-		VXLAN     []VXLANInterface     `yaml:"vxlan" hcl:"vxlan,block"`
-	} `yaml:"interfaces" hcl:"interfaces,block"`
-	EnsureSysctl bool `yaml:"ensureSysctl" hcl:"ensureSysctl,optional"`
+	Interfaces   InterfacesBlock `yaml:"interfaces" hcl:"interfaces,block"`
+	EnsureSysctl bool            `yaml:"ensureSysctl" hcl:"ensureSysctl,optional"`
+}
+
+type InterfacesBlock struct {
+	Wireguard []WireguardInterface `yaml:"wireguard" hcl:"wireguard,block"`
+	VXLAN     []VXLANInterface     `yaml:"vxlan" hcl:"vxlan,block"`
 }
 
 func (cfg *Config) CheckConfig() []error {

@@ -1,13 +1,11 @@
 package types
 
 type WireguardInterface struct {
-	Name string `yaml:"name" hcl:",label"`
-
-	Interface `yaml:",inline" hcl:",remain"`
-
-	Port  int              `yaml:"port" hcl:"port"`
-	Key   Key              `yaml:"key" hcl:"key,block"`
-	Peers []*WireguardPeer `yaml:"peers" hcl:"peer,block"`
+	Name    string           `yaml:"name" hcl:",label"`
+	Address string           `yaml:"address" hcl:"address"`
+	Port    int              `yaml:"port" hcl:"port"`
+	Key     Key              `yaml:"key" hcl:"key,block"`
+	Peers   []*WireguardPeer `yaml:"peers" hcl:"peer,block"`
 }
 
 type Key struct {
