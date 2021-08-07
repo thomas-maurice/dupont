@@ -25,40 +25,51 @@ $ ./bin/dupont -config examples/host-1.yaml
 
 ## Example config
 
-```yaml
+You can write the configurations both in yaml and HCL, the HCL being the more readable
+one, as follows:
+
+```hcl
 # Make sure we enable ip forward and co
-ensureSysctl: true
+ensureSysctl = true
 
 # Our interfaces definitions
-interfaces:
-  wireguard:
-    - name: wg-0
-      address: 192.168.69.2/24
-      port: 6969
-      key:
-        privateKey: yEkDVgYvtyssPeK1cxCKYoZjNt65GL7NqBNceuOQQlY=
-        # Note that specifying the public key here is a matter
-        # of convenience, you would not have that (prolly) on
-        # an actual deployment
-        publicKey: NYNj4shJcxucrhgNTwRg1sshlCT9cGKvClWEsycm/28=
-      peers:
-        - name: "wg-0"
-          description: "Desktop"
-          key:
-            publicKey: bScGfgslFnmIEcuAdU8PQla6OtE29VntPOd3rOb5phs=
-          allowedIPs:
-            - 192.168.69.1/24
-          endpoint:
-            address: 10.99.1.230
-            port: 6969
-          keepAlive: 5
-  vxlan:
-    - name: vx-0
-      address: 192.168.70.2/24
-      vni: 60
-      parent: wg-0
-      neighbours:
-        - address: 192.168.70.1
+interfaces {
+  # Wireguard interfaces definitions
+  wireguard "wg-0" {
+    # First interface definition
+    address = "192.168.69.1/32"
+    port    = 6969
+    key {
+      privateKey = "4CQWNQylWDWoZGgWDj58skAQuC84v1JXBKKqLTwcb3c="
+      # Note that specifying the public key here is a matter
+      # of convenience, you would not have that (prolly) on
+      # an actual deployment
+      publicKey = "bScGfgslFnmIEcuAdU8PQla6OtE29VntPOd3rOb5phs="
+    }
+    peer "wg-0" {
+      description = "Laptop"
+      key {
+        publicKey = "NYNj4shJcxucrhgNTwRg1sshlCT9cGKvClWEsycm/28="
+      }
+      allowedIPs = [
+        "192.168.69.2/32",
+      ]
+      endpoint {
+        address = "10.99.1.200"
+        port    = 6969
+      }
+      keepAlive = 5
+    }
+  }
+  vxlan "vx-0" {
+    address = "192.168.70.1/24"
+    vni     = 60
+    parent  = "wg-0"
+    neighbour {
+      address = "192.168.70.2"
+    }
+  }
+}
 ```
 
 Which produces something like that:

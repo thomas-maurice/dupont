@@ -3,6 +3,7 @@ module github.com/thomas-maurice/dupont
 go 1.16
 
 require (
+	github.com/hashicorp/hcl/v2 v2.10.1
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lorenzosaino/go-sysctl v0.1.1
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect

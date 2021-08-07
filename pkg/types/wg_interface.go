@@ -1,28 +1,30 @@
 package types
 
 type WireguardInterface struct {
-	Interface `yaml:",inline"`
+	Name string `yaml:"name" hcl:",label"`
 
-	Port  int             `yaml:"port"`
-	Key   Key             `yaml:"key"`
-	Peers []WireguardPeer `yaml:"peers"`
+	Interface `yaml:",inline" hcl:",remain"`
+
+	Port  int              `yaml:"port" hcl:"port"`
+	Key   Key              `yaml:"key" hcl:"key,block"`
+	Peers []*WireguardPeer `yaml:"peers" hcl:"peer,block"`
 }
 
 type Key struct {
-	PrivateKey string `yaml:"privateKey"`
-	PublicKey  string `yaml:"publicKey"`
+	PrivateKey string `yaml:"privateKey" hcl:"privateKey,optional"`
+	PublicKey  string `yaml:"publicKey" hcl:"publicKey,optional"`
 }
 
 type Endpoint struct {
-	Address string `yaml:"address"`
-	Port    int    `yaml:"port"`
+	Address string `yaml:"address" hcl:"address"`
+	Port    int    `yaml:"port" hcl:"port"`
 }
 
 type WireguardPeer struct {
-	Key         Key       `yaml:"key"`
-	Name        string    `yaml:"name"`
-	Description string    `yaml:"description"`
-	Endpoint    *Endpoint `yaml:"endpoint"`
-	AllowedIPs  []string  `yaml:"allowedIPs"`
-	KeepAlive   int       `yaml:"keepAlive"`
+	Key         Key       `yaml:"key" hcl:"key,block"`
+	Name        string    `yaml:"name" hcl:",label"`
+	Description string    `yaml:"description" hcl:"description,optional"`
+	Endpoint    *Endpoint `yaml:"endpoint" hcl:"endpoint,block"`
+	AllowedIPs  []string  `yaml:"allowedIPs" hcl:"allowedIPs"`
+	KeepAlive   int       `yaml:"keepAlive" hcl:"keepAlive"`
 }

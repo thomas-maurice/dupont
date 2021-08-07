@@ -2,31 +2,20 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 
 	dupont "github.com/thomas-maurice/dupont/pkg"
-	"github.com/thomas-maurice/dupont/pkg/types"
+	"github.com/thomas-maurice/dupont/pkg/config"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 )
 
 var (
-	configFile string
+	configFile   string
+	configFormat string
 )
 
 func init() {
-	flag.StringVar(&configFile, "config", "config.yaml", "Configuration file to use")
-}
-
-func loadConfig(filePath string) (*types.Config, error) {
-	b, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return nil, err
-	}
-
-	var config types.Config
-	err = yaml.Unmarshal(b, &config)
-	return &config, err
+	flag.StringVar(&configFile, "config", "config.hcl", "Configuration file to use")
+	flag.StringVar(&configFormat, "config-format", "hcl", "Configuration format (hcl/yaml)")
 }
 
 func main() {
@@ -37,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	cfg, err := loadConfig(configFile)
+	cfg, err := config.LoadConfig(log, configFile, configFormat)
 	if err != nil {
 		log.Fatal("could not load config", zap.Error(err))
 	}

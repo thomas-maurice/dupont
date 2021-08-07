@@ -3,15 +3,17 @@ package types
 import "fmt"
 
 type VXLANInterface struct {
-	Interface `yaml:",inline"`
+	Name string `yaml:"name" hcl:",label"`
 
-	Parent     string `yaml:"parent"`
-	VNI        int    `yaml:"vni"`
-	Port       int    `yaml:"port"`
+	Interface `yaml:",inline" hcl:",remain"`
+
+	Parent     string `yaml:"parent" hcl:"parent"`
+	VNI        int    `yaml:"vni" hcl:"vni"`
+	Port       int    `yaml:"port" hcl:"port,optional"`
 	Neighbours []struct {
 		// These are the neighbours inside of the vxlan overlay
-		Address string `yaml:"address"`
-	} `yaml:"neighbours"`
+		Address string `yaml:"address" hcl:"address"`
+	} `yaml:"neighbours" hcl:"neighbour,block"`
 }
 
 func (vx *VXLANInterface) BridgeName() string {
