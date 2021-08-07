@@ -1,20 +1,23 @@
-name: Generate release-artifacts
 on:
   release:
-    types:
-      - created
+    types: [created]
+
 jobs:
-  generate:
-    name: Generate cross-platform builds
+  releases-matrix:
+    name: Release Go Binary
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: ["386", amd64, arm, arm64]
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-      - name: Generate build files
-        uses: thatisuday/go-cross-build@v1
-        with:
-          platforms: "linux/amd64, linux/arm64, linux/arm, linux/mips, linux/386"
-          package: ""
-          name: "dupont"
-          compress: "false"
-          dest: "dist"
+    - uses: actions/checkout@v2
+    - uses: wangyoucao577/go-release-action@v1.19
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        goversion: "https://dl.google.com/go/go1.16.7.linux-amd64.tar.gz"
+        project_path: "."
+        binary_name: "dupont"
+        extra_files: README.md
