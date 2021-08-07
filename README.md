@@ -112,4 +112,18 @@ hosts = {
 }
 ```
 
-Then run `./bin/dupont -what generate -config config/topology.hcl` and it will generate one file per host
+Then run `./bin/dupont -what generate -config config/topology.hcl` and it will generate one file per host in a folder
+named after the `topology ID` of the said topology. It is basically a short hash of the topology name. You would have
+then something like
+```bash
+$ tree 657861/
+657861/
+├── pi1.hcl
+├── pi2.hcl
+├── pi3.hcl
+└── pi4.hcl
+
+0 directories, 4 files
+```
+
+You only have to copy those files on every host of the mesh, then apply the config and you are done !
