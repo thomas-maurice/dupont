@@ -25,7 +25,7 @@ var (
 func init() {
 	flag.StringVar(&configFile, "config", "config.hcl", "Configuration file to use")
 	flag.StringVar(&configFormat, "config-format", "hcl", "Configuration format (hcl/yaml)")
-	flag.StringVar(&what, "what", "apply", "What to do ? (apply/generate)")
+	flag.StringVar(&what, "what", "apply", "What to do ? (apply/delete/generate)")
 }
 
 func main() {
@@ -48,6 +48,18 @@ func main() {
 		err = dupont.ApplyConfiguration(log, cfg)
 		if err != nil {
 			log.Fatal("could not apply config", zap.Error(err))
+		}
+	case "delete":
+		cfg, err := config.LoadConfig(log, configFile, configFormat)
+		if err != nil {
+			log.Fatal("could not load config", zap.Error(err))
+		}
+
+		log.Info("loaded config", zap.Any("config", cfg))
+
+		err = dupont.TearDownConfiguration(log, cfg)
+		if err != nil {
+			log.Fatal("could not tear down config", zap.Error(err))
 		}
 	case "generate":
 		cfg, err := config.LoadTopology(log, configFile, configFormat)

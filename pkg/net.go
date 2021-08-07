@@ -1,7 +1,9 @@
 package dupont
 
 import (
+	"fmt"
 	"net"
+	"strings"
 	"syscall"
 
 	"github.com/thomas-maurice/dupont/pkg/types"
@@ -43,6 +45,49 @@ func ApplyConfiguration(log *zap.Logger, cfg *types.Config) error {
 		err = ensureIPAddress(log, vxlanIface.BridgeName(), vxlanIface.Address)
 		if err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+func TearDownConfiguration(log *zap.Logger, cfg *types.Config) error {
+	for _, vxlanIface := range cfg.Interfaces.VXLAN {
+		link, err := netlink.LinkByName(vxlanIface.Name)
+		if strings.Contains(err.Error(), "Link not found") {
+			continue
+		} else if err != nil {
+			return fmt.Errorf("could not get link %s: %w", vxlanIface.Name, err)
+		}
+		err = netlink.LinkDel(link)
+		if err != nil {
+			return fmt.Errorf("could not delete link %s: %w", vxlanIface.Name, err)
+		}
+	}
+
+	for _, vxlanIface := range cfg.Interfaces.VXLAN {
+		link, err := netlink.LinkByName(vxlanIface.BridgeName())
+		if strings.Contains(err.Error(), "Link not found") {
+			continue
+		} else if err != nil {
+			return fmt.Errorf("could not get bridge %s: %w", vxlanIface.BridgeName(), err)
+		}
+		err = netlink.LinkDel(link)
+		if err != nil {
+			return fmt.Errorf("could not delete bridge %s: %w", vxlanIface.BridgeName(), err)
+		}
+	}
+
+	for _, wgIface := range cfg.Interfaces.Wireguard {
+		link, err := netlink.LinkByName(wgIface.Name)
+		if strings.Contains(err.Error(), "Link not found") {
+			continue
+		} else if err != nil {
+			return fmt.Errorf("could not get wg %s: %w", wgIface.Name, err)
+		}
+		err = netlink.LinkDel(link)
+		if err != nil {
+			return fmt.Errorf("could not delete wg %s: %w", wgIface.Name, err)
 		}
 	}
 

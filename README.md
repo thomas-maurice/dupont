@@ -21,6 +21,8 @@ Then compile the binary
 ```bash
 $ make
 $ ./bin/dupont -what apply -config examples/host-1.hcl
+# You can teardown the config by doing
+$ ./bin/dupont -what delete -config examples/host-1.hcl
 ```
 
 ## Example config
