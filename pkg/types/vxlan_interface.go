@@ -5,9 +5,9 @@ import "fmt"
 type VXLANInterface struct {
 	Name       string `yaml:"name" hcl:",label"`
 	Address    string `yaml:"address" hcl:"address"`
-	Parent     string `yaml:"parent" hcl:"parent"`
 	VNI        int    `yaml:"vni" hcl:"vni"`
 	Port       int    `yaml:"port" hcl:"port,optional"`
+	Parent     string `yaml:"parent" hcl:"parent"`
 	Neighbours []struct {
 		// These are the neighbours inside of the vxlan overlay
 		Address string `yaml:"address" hcl:"address"`

@@ -19,10 +19,10 @@ type Endpoint struct {
 }
 
 type WireguardPeer struct {
-	Key         Key       `yaml:"key" hcl:"key,block"`
 	Name        string    `yaml:"name" hcl:",label"`
 	Description string    `yaml:"description" hcl:"description,optional"`
+	KeepAlive   int       `yaml:"keepAlive" hcl:"keepAlive"`
+	Key         Key       `yaml:"key" hcl:"key,block"`
 	Endpoint    *Endpoint `yaml:"endpoint" hcl:"endpoint,block"`
 	AllowedIPs  []string  `yaml:"allowedIPs" hcl:"allowedIPs"`
-	KeepAlive   int       `yaml:"keepAlive" hcl:"keepAlive"`
 }

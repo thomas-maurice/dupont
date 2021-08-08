@@ -1,8 +1,8 @@
 package types
 
 type Config struct {
-	Interfaces   InterfacesBlock `yaml:"interfaces" hcl:"interfaces,block"`
 	EnsureSysctl bool            `yaml:"ensureSysctl" hcl:"ensureSysctl,optional"`
+	Interfaces   InterfacesBlock `yaml:"interfaces" hcl:"interfaces,block"`
 }
 
 type InterfacesBlock struct {
